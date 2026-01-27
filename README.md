@@ -30,33 +30,11 @@ Both maps include interactive features such as hover and click interactions, leg
 - **Population Data:** American Community Survey (ACS) 2018 5-year estimates  
 - **County Boundaries:** U.S. Census Bureau  
 
-The data were preprocessed and provided for this lab to support thematic mapping at the county level.
-
 ---
 
 ## Libraries and Tools Used
 
 - Mapbox GL JS  
 - HTML5  
-- CSS3  
 - JavaScript  
 - Mapshaper (for GeoJSON processing and simplification)
-
----
-
-## File Structure
-
-```text
-covid-us-2020-maps/
-│ map1.html
-│ map2.html
-│ README.md
-├─ assets/
-│   ├─ us-covid-2020-rates.geojson
-│   └─ us-covid-2020-counts.geojson
-├─ css/
-│   └─ style.css
-├─ js/
-│   └─ main.js
-└─ img/
-    └─ (optional screenshots)
