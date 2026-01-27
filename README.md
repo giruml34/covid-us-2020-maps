@@ -1,1 +1,1 @@
-covid-us-2020-maps
+Covid-us-2020-maps
