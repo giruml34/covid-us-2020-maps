@@ -12,33 +12,20 @@ html, body {
     width: 100%;
 }
 
-/* Title */
 #title {
     position: absolute;
     top: 20px;
     left: 20px;
-    font-size: 24px;
     color: white;
+    font-size: 24px;
     z-index: 1;
 }
 
 #subtitle {
     position: absolute;
-    top: 60px;
+    top: 55px;
     left: 20px;
-    font-size: 14px;
     color: white;
-    z-index: 1;
-}
-
-/* Legend */
-#legend {
-    position: absolute;
-    bottom: 30px;
-    right: 30px;
-    background: white;
-    padding: 10px;
-    border-radius: 4px;
-    font-size: 12px;
+    font-size: 14px;
     z-index: 1;
 }
