@@ -1,11 +1,13 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ2lydW13IiwiYSI6ImNtaGNsMnczejI4a2cybXB1b3h6dHBuaHkifQ.fO5Cyk2RL57zq0RKG8BDkg';
+mapboxgl.accessToken = 'PASTE_YOUR_TOKEN_HERE';
 
-const isMap1 = window.location.href.includes('map1');
-const isMap2 = window.location.href.includes('map2');
+const isRatesMap = window.location.href.includes('map1');
+const geojsonFile = isRatesMap
+  ? 'assets/us-covid-2020-rates.geojson'
+  : 'assets/us-covid-2020-counts.geojson';
 
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/dark-v10',
+  style: 'mapbox://styles/mapbox/dark-v11',
   center: [-98, 38],
   zoom: 3,
   projection: 'albers'
@@ -13,80 +15,64 @@ const map = new mapboxgl.Map({
 
 map.on('load', () => {
 
-  /* =========================
-     MAP 1 — CHOROPLETH
-     ========================= */
-  if (isMap1) {
+  map.addSource('covid', {
+    type: 'geojson',
+    data: geojsonFile,
+    cluster: !isRatesMap,
+    clusterRadius: 40
+  });
 
-    map.addSource('rates', {
-      type: 'geojson',
-      data: 'assets/us-covid-2020-rates.geojson'
-    });
-
+  // =========================
+  // MAP 1 — CHOROPLETH
+  // =========================
+  if (isRatesMap) {
     map.addLayer({
-      id: 'rates-fill',
+      id: 'rates-layer',
       type: 'fill',
-      source: 'rates',
+      source: 'covid',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['get', 'rate'],
-          0, '#edf8fb',
-          5, '#b2e2e2',
-          10, '#66c2a4',
-          20, '#2ca25f',
-          40, '#006d2c'
+          ['get', 'rates'],
+          0, '#f1eef6',
+          5, '#bdc9e1',
+          10, '#74a9cf',
+          20, '#2b8cbe',
+          40, '#045a8d'
         ],
         'fill-opacity': 0.8
       }
     });
 
-    map.addLayer({
-      id: 'rates-outline',
-      type: 'line',
-      source: 'rates',
-      paint: {
-        'line-color': '#ffffff',
-        'line-width': 0.2
-      }
-    });
-
-    map.on('mousemove', 'rates-fill', (e) => {
-      const rate = e.features[0].properties.rate;
-      new mapboxgl.Popup({ closeButton: false })
+    map.on('click', 'rates-layer', e => {
+      const p = e.features[0].properties;
+      new mapboxgl.Popup()
         .setLngLat(e.lngLat)
-        .setHTML(`<strong>Cases per 1,000:</strong> ${rate}`)
+        .setHTML(
+          `<strong>${p.county}, ${p.state}</strong><br>
+           Cases per 1,000: ${p.rates}`
+        )
         .addTo(map);
     });
 
-    document.getElementById('legend').innerHTML = `
-      <strong>Cases per 1,000</strong>
-      <div class="legend-row"><div class="legend-color" style="background:#edf8fb"></div>Low</div>
-      <div class="legend-row"><div class="legend-color" style="background:#2ca25f"></div>High</div>
-      <div style="margin-top:6px;font-size:10px">Source: NYT, ACS</div>
-    `;
+    document.getElementById('legend').innerHTML =
+      `<b>Cases per 1,000</b><br>
+       Light → Dark`;
+
   }
 
-  /* =========================
-     MAP 2 — PROPORTIONAL + CLUSTERS
-     ========================= */
-  if (isMap2) {
-
-    map.addSource('cases', {
-      type: 'geojson',
-      data: 'assets/us-covid-2020-counts.geojson',
-      cluster: true,
-      clusterRadius: 40
-    });
-
+  // =========================
+  // MAP 2 — CLUSTERS + CIRCLES
+  // =========================
+  else {
     map.addLayer({
       id: 'clusters',
       type: 'circle',
-      source: 'cases',
+      source: 'covid',
       filter: ['has', 'point_count'],
       paint: {
-        'circle-color': '#3182bd',
+        'circle-color': '#f03b20',
         'circle-radius': [
           'step',
           ['get', 'point_count'],
@@ -96,47 +82,38 @@ map.on('load', () => {
     });
 
     map.addLayer({
-      id: 'cluster-count',
-      type: 'symbol',
-      source: 'cases',
-      filter: ['has', 'point_count'],
-      layout: {
-        'text-field': '{point_count_abbreviated}',
-        'text-size': 12
-      }
-    });
-
-    map.addLayer({
-      id: 'cases-point',
+      id: 'cases-layer',
       type: 'circle',
-      source: 'cases',
+      source: 'covid',
       filter: ['!', ['has', 'point_count']],
       paint: {
-        'circle-color': '#e34a33',
+        'circle-color': '#feb24c',
         'circle-radius': [
           'interpolate',
           ['linear'],
           ['get', 'cases'],
-          1000, 4,
-          10000, 12,
-          50000, 20
+          0, 3,
+          50000, 10,
+          200000, 20
         ],
-        'circle-opacity': 0.6
+        'circle-opacity': 0.7
       }
     });
 
-    map.on('click', 'cases-point', (e) => {
-      const cases = e.features[0].properties.cases;
+    map.on('click', 'cases-layer', e => {
+      const p = e.features[0].properties;
       new mapboxgl.Popup()
         .setLngLat(e.lngLat)
-        .setHTML(`<strong>Total cases:</strong> ${cases}`)
+        .setHTML(
+          `<strong>${p.county}, ${p.state}</strong><br>
+           Total Cases: ${p.cases}`
+        )
         .addTo(map);
     });
 
-    document.getElementById('legend').innerHTML = `
-      <strong>Total Cases</strong>
-      <div class="legend-row"><div class="legend-color" style="background:#e34a33"></div>Small → Large</div>
-      <div style="margin-top:6px;font-size:10px">Source: NYT</div>
-    `;
+    document.getElementById('legend').innerHTML =
+      `<b>Total Cases</b><br>
+       Small → Large`;
   }
 });
+
