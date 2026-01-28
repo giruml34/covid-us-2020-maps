@@ -1,39 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>COVID-19 Case Rates</title>
-  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-  <style>
-    body { margin: 0; padding: 0; }
-    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
-    #legend {
-      position: absolute;
-      bottom: 30px;
-      right: 10px;
-      background: white;
-      padding: 10px;
-      font-size: 12px;
-      border-radius: 4px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    }
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 
-    #legend span {
-      display: inline-block;
-      width: 15px;
-      height: 15px;
-      margin-right: 5px;
-    }
-  </style>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 </head>
 
 <body>
-  <div id="map"></div>
-  <div id="legend"></div>
 
-  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-  <script src="js/map1.js"></script>
+  <h1 style="position:absolute; z-index:1; margin:15px; color:white;">
+    COVID-19 Case Rates<br>
+    <small>United States, 2020</small>
+  </h1>
+
+  <div id="map1"></div>
+
+  <script src="js/main.js"></script>
+
 </body>
 </html>
