@@ -2,48 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>COVID-19 Cases (Map 2)</title>
+  <title>COVID-19 Total Cases (2020)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <!-- Mapbox CSS -->
+  <link
+    href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
+    rel="stylesheet"
+  />
+
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
+
+  <!-- Map container -->
   <div id="map"></div>
 
+  <!-- Information panel -->
   <div id="info" class="panel">
     <h1>COVID-19 Total Cases (2020)</h1>
     <p>
-      Proportional symbol map showing county-level total cases in 2020.
-      Click a dot to see details.
+      Proportional symbol map showing county-level total COVID-19 cases
+      across the United States in 2020.
     </p>
-    <p><b>Projection:</b> Albers (US-focused)</p>
-    <p><b>Data:</b> New York Times (cases)</p>
+    <p><b>Projection:</b> Albers (U.S.-focused)</p>
+    <p><b>Data source:</b> New York Times</p>
     <p><b>Author:</b> 206ET</p>
   </div>
 
+  <!-- Legend -->
   <div id="legend" class="panel">
-    <h3>Legend (Circle size = cases)</h3>
+    <h3>Total COVID-19 Cases</h3>
+
     <div class="circle-legend">
       <div class="circle-item">
-        <div class="circle" style="width:10px;height:10px;"></div>
-        <div>Small</div>
+        <div class="circle" style="width:10px; height:10px;"></div>
+        <div>Lower</div>
       </div>
+
       <div class="circle-item">
-        <div class="circle" style="width:20px;height:20px;"></div>
+        <div class="circle" style="width:20px; height:20px;"></div>
         <div>Medium</div>
       </div>
+
       <div class="circle-item">
-        <div class="circle" style="width:34px;height:34px;"></div>
-        <div>Large</div>
+        <div class="circle" style="width:34px; height:34px;"></div>
+        <div>Higher</div>
       </div>
     </div>
+
     <p style="margin:8px 0 0 0; font-size:11px; color:#444;">
-      Larger circles indicate higher case counts.
+      Circle size represents total case counts.
     </p>
   </div>
 
+  <!-- Mapbox JS -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+  <!-- Map logic -->
   <script src="js/map2.js"></script>
+
 </body>
 </html>
