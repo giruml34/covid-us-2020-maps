@@ -21,7 +21,7 @@ https://giruml34.github.io/covid-us-2020-maps/map1.html
 
 ---
 
-## Map 2: COVID-19 Total Cases (Proportional Symbols)
+## Map 2: COVID-19 Total Cases
 
 ![COVID-19 Total Cases Map](img/map2.png)
 
