@@ -1,11 +1,8 @@
-body {
-  margin: 0;
-  padding: 0;
-}
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ2lydW13IiwiYSI6ImNtaGNsMnczejI4a2cybXB1b3h6dHBuaHkifQ.fO5Cyk2RL57zq0RKG8BDkg';
 
-#map1, #map2 {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-}
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/light-v11',
+  center: [-98, 38],
+  zoom: 3
+});
