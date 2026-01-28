@@ -10,6 +10,9 @@ This project presents two interactive web maps that visualize the spatial distri
 
 This choropleth map displays COVID-19 case rates per 1,000 people by county in 2020. Counties are shaded from light to dark, with darker colors representing higher case rates relative to population size. This map emphasizes relative risk and allows comparison across counties with different population sizes.
 
+**Live Map:**  
+https://giruml34.github.io/covid-us-2020-maps/map1.html
+
 **Features:**
 - County-level polygons
 - Color-scaled choropleth
@@ -23,6 +26,9 @@ This choropleth map displays COVID-19 case rates per 1,000 people by county in 2
 ![COVID-19 Total Cases Map](img/map2.png)
 
 This proportional symbol map represents total COVID-19 case counts by county in 2020. Each county is shown as a circle, with larger circles indicating higher total case numbers. This map highlights population centers and areas with the highest absolute number of cases.
+
+**Live Map:**  
+https://giruml34.github.io/covid-us-2020-maps/map2.html
 
 **Features:**
 - County centroid point data
@@ -39,18 +45,17 @@ This proportional symbol map represents total COVID-19 case counts by county in 
 ---
 
 ## Tools & Technologies
-- Mapbox GL JS
-- GeoJSON
-- Mapshaper
-- HTML, CSS, and JavaScript
-- GitHub Pages
+- Mapbox GL JS  
+- GeoJSON  
+- Mapshaper  
+- HTML, CSS, and JavaScript  
+- GitHub Pages  
 
 ---
 
 ## Author
 Girum Wanoro
 
----
 
 ## Live Maps
 - Map 1 (Case Rates): map1.html
