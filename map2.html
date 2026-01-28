@@ -1,116 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>COVID-19 Total Cases (2020)</title>
-  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta charset="utf-8" />
+  <title>COVID-19 Cases (Map 2)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Mapbox -->
-  <link href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css" rel="stylesheet">
-  <script src="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js"></script>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
 
-    #map {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 100%;
-    }
-
-    #title {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      color: white;
-      font-size: 24px;
-      z-index: 1;
-    }
-
-    #legend {
-      position: absolute;
-      bottom: 30px;
-      right: 20px;
-      background: white;
-      padding: 10px 12px;
-      font-size: 12px;
-      border-radius: 4px;
-      line-height: 1.4;
-      z-index: 1;
-    }
-  </style>
+ 
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 
 <body>
+  <div id="map"></div>
 
-<div id="map"></div>
-
-<div id="title">COVID-19 Total Cases (2020)</div>
-
-<div id="legend">
-  <b>Total COVID-19 Cases</b><br>
-  Circle size represents total cases<br>
-  Larger circles = more cases
-</div>
-
-<script>
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ2lydW13IiwiYSI6ImNtaGNsMnczejI4a2cybXB1b3h6dHBuaHkifQ.fO5Cyk2RL57zq0RKG8BDkg';
-
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/dark-v11',
-  center: [-98, 38],
-  zoom: 3,
-  projection: 'albers'
-});
-
-map.on('load', () => {
-
-  map.addSource('covid-cases', {
-    type: 'geojson',
-    data: 'assets/us-covid-2020-counts.geojson'
-  });
-
-  map.addLayer({
-    id: 'cases-layer',
-    type: 'circle',
-    source: 'covid-cases',
-    paint: {
-      'circle-radius': [
-        'interpolate',
-        ['linear'],
-        ['get', 'cases'],
-        0, 5,
-        1000, 8,
-        10000, 12,
-        50000, 18,
-        200000, 28,
-      ],
-      'circle-color': '#feb24c',
-      'circle-opacity': 0.7,
-      'circle-stroke-color': '#ffffff',
-      'circle-stroke-width': 1
-    }
-  });
-
-  map.on('click', 'cases-layer', (e) => {
-    const p = e.features[0].properties;
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML(
-        `<strong>${p.county}, ${p.state}</strong><br>
-         Total cases: ${p.cases.toLocaleString()}`
-      )
-      .addTo(map);
-  });
-
-});
-</script>
-
-</body>
-</html>
+ 
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
