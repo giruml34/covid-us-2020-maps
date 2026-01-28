@@ -2,84 +2,115 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZ2lydW13IiwiYSI6ImNtaGNsMnczejI4a2cybXB1b3h6d
 
 const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/dark-v10',
+    style: 'mapbox://styles/mapbox/light-v11', // LIGHT BASEMAP
     center: [-98, 38],
     zoom: 3
 });
 
 map.on('load', () => {
 
-    /* ---------- CHOROPLETH (RATES) ---------- */
-    map.addSource('rates', {
+    /* ===============================
+       DATA SOURCE WITH CLUSTERING
+    =============================== */
+    map.addSource('cases', {
         type: 'geojson',
-        data: 'assets/us-covid-2020-rates.geojson'
+        data: 'assets/us-covid-2020-counts.geojson',
+        cluster: true,
+        clusterMaxZoom: 6,
+        clusterRadius: 50
     });
 
+    /* ===============================
+       CLUSTER CIRCLES
+    =============================== */
     map.addLayer({
-        id: 'rates-layer',
-        type: 'fill',
-        source: 'rates',
+        id: 'clusters',
+        type: 'circle',
+        source: 'cases',
+        filter: ['has', 'point_count'],
         paint: {
-            'fill-color': [
-                'interpolate',
-                ['linear'],
-                ['get', 'rates'],
-                0, '#edf8fb',
-                10, '#b3cde3',
-                20, '#8c96c6',
-                30, '#8856a7',
-                40, '#810f7c'
+            'circle-color': [
+                'step',
+                ['get', 'point_count'],
+                '#ccebc5',
+                100, '#7bccc4',
+                750, '#2b8cbe'
             ],
-            'fill-opacity': 0.8
+            'circle-radius': [
+                'step',
+                ['get', 'point_count'],
+                15,
+                100, 25,
+                750, 40
+            ]
         }
     });
 
-    /* ---------- PROPORTIONAL SYMBOLS (CASES) ---------- */
-    map.addSource('cases', {
-        type: 'geojson',
-        data: 'assets/us-covid-2020-counts.geojson'
+    /* ===============================
+       CLUSTER COUNT LABELS
+    =============================== */
+    map.addLayer({
+        id: 'cluster-count',
+        type: 'symbol',
+        source: 'cases',
+        filter: ['has', 'point_count'],
+        layout: {
+            'text-field': '{point_count_abbreviated}',
+            'text-font': ['Open Sans Bold'],
+            'text-size': 12
+        }
     });
 
+    /* ===============================
+       UNCLUSTERED POINTS
+    =============================== */
     map.addLayer({
-        id: 'cases-layer',
+        id: 'unclustered-point',
         type: 'circle',
         source: 'cases',
+        filter: ['!', ['has', 'point_count']],
         paint: {
+            'circle-color': '#41b6c4',
             'circle-radius': [
                 'interpolate',
                 ['linear'],
                 ['get', 'cases'],
-                1000, 3,
-                10000, 8,
-                50000, 16,
-                200000, 30
+                1000, 5,
+                10000, 10,
+                50000, 18
             ],
-            'circle-color': '#41b6c4',
-            'circle-opacity': 0.6,
-            'circle-stroke-color': 'white',
-            'circle-stroke-width': 1
+            'circle-opacity': 0.7,
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#333'
         }
     });
 
-    /* ---------- POPUP ---------- */
-    map.on('click', 'cases-layer', (e) => {
+    /* ===============================
+       POPUPS
+    =============================== */
+    map.on('click', 'unclustered-point', (e) => {
+        const p = e.features[0].properties;
         new mapboxgl.Popup()
             .setLngLat(e.lngLat)
             .setHTML(
-                `<strong>County:</strong> ${e.features[0].properties.county}<br>
-                 <strong>Cases:</strong> ${e.features[0].properties.cases}`
+                `<strong>${p.county}</strong><br>
+                 Total Cases: ${p.cases}`
             )
             .addTo(map);
     });
 
-    /* ---------- LEGEND ---------- */
+    /* ===============================
+       LEGEND
+    =============================== */
     const legend = document.getElementById('legend');
     legend.innerHTML = `
-        <strong>Legend</strong><br>
-        <div class="break"><span class="dot" style="width:10px;height:10px;background:#edf8fb"></span>Low</div>
-        <div class="break"><span class="dot" style="width:14px;height:14px;background:#8c96c6"></span>Medium</div>
-        <div class="break"><span class="dot" style="width:18px;height:18px;background:#810f7c"></span>High</div>
+        <strong>COVID-19 Cases</strong><br>
+        <div><span style="background:#41b6c4;width:12px;height:12px;display:inline-block;border-radius:50%"></span> County</div>
+        <div><span style="background:#ccebc5;width:12px;height:12px;display:inline-block;border-radius:50%"></span> Small cluster</div>
+        <div><span style="background:#7bccc4;width:12px;height:12px;display:inline-block;border-radius:50%"></span> Medium cluster</div>
+        <div><span style="background:#2b8cbe;width:12px;height:12px;display:inline-block;border-radius:50%"></span> Large cluster</div>
         <hr>
-        <small>Source: NY Times & ACS</small>
+        <small>Source: NY Times</small>
     `;
 });
+
