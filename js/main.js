@@ -1,7 +1,5 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2lydW13IiwiYSI6ImNtaGNsMnczejI4a2cybXB1b3h6dHBuaHkifQ.fO5Cyk2RL57zq0RKG8BDkg';
 
-const isRates = window.location.href.includes("map1");
-
 const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/light-v11',
@@ -11,7 +9,11 @@ const map = new mapboxgl.Map({
 
 map.on('load', () => {
 
-    if (isRates) {
+    // =========================
+    // MAP 1 — CHOROPLETH (RATES)
+    // =========================
+    if (window.location.href.includes("map1")) {
+
         map.addSource('rates', {
             type: 'geojson',
             data: 'assets/us-covid-2020-rates.geojson'
@@ -31,11 +33,26 @@ map.on('load', () => {
                     10, '#66c2a4',
                     20, '#238b45'
                 ],
-                'fill-opacity': 0.8
+                'fill-opacity': 0.85
             }
         });
 
-    } else {
+        map.on('click', 'rates-layer', (e) => {
+            new mapboxgl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(`<strong>Rate per 1,000:</strong> ${e.features[0].properties.rate}`)
+                .addTo(map);
+        });
+
+        document.getElementById('legend').innerHTML =
+            "<strong>Cases per 1,000</strong><br>Low → High";
+    }
+
+    // ============================
+    // MAP 2 — PROPORTIONAL SYMBOLS
+    // ============================
+    if (window.location.href.includes("map2")) {
+
         map.addSource('cases', {
             type: 'geojson',
             data: 'assets/us-covid-2020-counts.geojson'
@@ -61,16 +78,14 @@ map.on('load', () => {
             }
         });
 
-        map.on('click', 'cases-layer', e => {
+        map.on('click', 'cases-layer', (e) => {
             new mapboxgl.Popup()
                 .setLngLat(e.lngLat)
-                .setHTML(`<b>Cases:</b> ${e.features[0].properties.cases}`)
+                .setHTML(`<strong>Total Cases:</strong> ${e.features[0].properties.cases}`)
                 .addTo(map);
         });
+
+        document.getElementById('legend').innerHTML =
+            "<strong>Total Cases</strong><br>Small → Large";
     }
-
-    document.getElementById('legend').innerHTML = isRates
-        ? "<b>Cases per 1,000</b><br>Low → High"
-        : "<b>Total Cases</b><br>Small → Large";
 });
-
