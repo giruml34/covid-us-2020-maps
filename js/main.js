@@ -1,91 +1,103 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ2lydW13IiwiYSI6ImNtaGNsMnczejI4a2cybXB1b3h6dHBuaHkifQ.fO5Cyk2RL57zq0RKG8BDkg';
+mapboxgl.accessToken =
+  'pk.eyJ1IjoiZ2lydW13IiwiYSI6ImNtaGNsMnczejI4a2cybXB1b3h6dHBuaHkifQ.fO5Cyk2RL57zq0RKG8BDkg';
 
 const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/dark-v10',
-    center: [-98, 39],
-    zoom: 3,
-    projection: 'albers'
+  container: 'map',
+  style: 'mapbox://styles/mapbox/light-v11',
+  center: [-98, 38],
+  zoom: 3,
+  projection: 'albers'
 });
 
 map.on('load', () => {
 
-    if (MAP_TYPE === "rates") {
-        loadRatesMap();
-    } else {
-        loadCountsMap();
-    }
-
-});
-
-function loadRatesMap() {
+  /* =========================
+     MAP 1 — CASE RATES
+  ========================= */
+  if (window.location.href.includes('map1.html')) {
 
     map.addSource('rates', {
-        type: 'geojson',
-        data: 'assets/us-covid-2020-rates.geojson'
+      type: 'geojson',
+      data: 'assets/us-covid-2020-rates.geojson'
     });
 
     map.addLayer({
-        id: 'rates-layer',
-        type: 'fill',
-        source: 'rates',
-        paint: {
-            'fill-color': [
-                'interpolate',
-                ['linear'],
-                ['get', 'rate'],
-                0, '#edf8fb',
-                5, '#b2e2e2',
-                10, '#66c2a4',
-                20, '#238b45'
-            ],
-            'fill-opacity': 0.8,
-            'fill-outline-color': '#ffffff'
-        }
+      id: 'rates-layer',
+      type: 'fill',
+      source: 'rates',
+      paint: {
+        'fill-color': [
+          'interpolate',
+          ['linear'],
+          ['get', 'rate_per_1000'],
+          0, '#f2f0f7',
+          5, '#cbc9e2',
+          10, '#9e9ac8',
+          20, '#756bb1',
+          30, '#54278f'
+        ],
+        'fill-opacity': 0.8
+      }
     });
 
-    document.getElementById('legend').innerHTML = `
-        <strong>Cases per 1,000</strong><br>
-        0–5<br>5–10<br>10–20<br>20+
-    `;
-}
+    map.on('click', 'rates-layer', e => {
+      const p = e.features[0].properties;
+      new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(
+          `<strong>${p.NAME}</strong><br>
+           Cases per 1,000: ${p.rate_per_1000}`
+        )
+        .addTo(map);
+    });
 
-function loadCountsMap() {
+    document.getElementById('legend').innerHTML =
+      '<strong>Cases per 1,000</strong><br>Low → High';
+  }
 
-    map.addSource('counts', {
-        type: 'geojson',
-        data: 'assets/us-covid-2020-counts.geojson'
+  /* =========================
+     MAP 2 — TOTAL CASES
+  ========================= */
+  if (window.location.href.includes('map2.html')) {
+
+    map.addSource('cases', {
+      type: 'geojson',
+      data: 'assets/us-covid-2020-counts.geojson'
     });
 
     map.addLayer({
-        id: 'counts-layer',
-        type: 'circle',
-        source: 'counts',
-        paint: {
-            'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['get', 'cases'],
-                1000, 4,
-                10000, 10,
-                50000, 20
-            ],
-            'circle-color': '#2b8cbe',
-            'circle-opacity': 0.6,
-            'circle-stroke-color': '#ffffff',
-            'circle-stroke-width': 1
-        }
+      id: 'cases-layer',
+      type: 'circle',
+      source: 'cases',
+      paint: {
+        'circle-radius': [
+          'interpolate',
+          ['linear'],
+          ['get', 'cases'],
+          0, 3,
+          10000, 6,
+          50000, 12,
+          100000, 20
+        ],
+        'circle-color': '#e34a33',
+        'circle-opacity': 0.6,
+        'circle-stroke-color': 'white',
+        'circle-stroke-width': 1
+      }
     });
 
-    map.on('click', 'counts-layer', (e) => {
-        new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(`<strong>Cases:</strong> ${e.features[0].properties.cases}`)
-            .addTo(map);
+    map.on('click', 'cases-layer', e => {
+      const p = e.features[0].properties;
+      new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(
+          `<strong>${p.NAME}</strong><br>
+           Total cases: ${p.cases}`
+        )
+        .addTo(map);
     });
 
-    document.getElementById('legend').innerHTML = `
-        <strong>Total Cases</strong><br>
-        Small → Large
-    `;
-}
+    document.getElementById('legend').innerHTML =
+      '<strong>Total Cases</strong><br>Small → Large';
+  }
+});
