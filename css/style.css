@@ -11,13 +11,14 @@ body {
     width: 100%;
 }
 
-/* Titles */
+/* Title */
 #title {
     position: absolute;
     top: 20px;
     left: 20px;
     font-size: 24px;
     color: white;
+    z-index: 1;
 }
 
 #subtitle {
@@ -26,6 +27,7 @@ body {
     left: 20px;
     font-size: 14px;
     color: white;
+    z-index: 1;
 }
 
 /* Legend */
@@ -40,11 +42,19 @@ body {
 }
 
 .break {
-    margin-bottom: 6px;
+    margin-bottom: 5px;
 }
 
 .dot {
     display: inline-block;
     border-radius: 50%;
     opacity: 0.7;
+}
+
+.dot-label {
+    margin-left: 6px;
+}
+
+a {
+    color: black;
 }
