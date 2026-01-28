@@ -11,12 +11,11 @@ body {
   width: 100%;
 }
 
-/* Titles */
 #title {
   position: absolute;
   top: 20px;
   left: 20px;
-  font-size: 26px;
+  font-size: 22px;
   color: white;
   background: rgba(0,0,0,0.6);
   padding: 6px 10px;
@@ -25,7 +24,7 @@ body {
 
 #subtitle {
   position: absolute;
-  top: 65px;
+  top: 60px;
   left: 20px;
   font-size: 14px;
   color: white;
@@ -34,25 +33,12 @@ body {
   border-radius: 4px;
 }
 
-/* Legend */
 #legend {
   position: absolute;
   bottom: 30px;
-  right: 30px;
+  right: 20px;
   background: white;
   padding: 10px;
-  border-radius: 4px;
   font-size: 12px;
-}
-
-.legend-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.legend-color {
-  width: 18px;
-  height: 18px;
-  margin-right: 6px;
+  border-radius: 4px;
 }
