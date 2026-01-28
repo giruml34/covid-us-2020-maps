@@ -1,116 +1,62 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2lydW13IiwiYSI6ImNtaGNsMnczejI4a2cybXB1b3h6dHBuaHkifQ.fO5Cyk2RL57zq0RKG8BDkg';
 
 const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/light-v11', // LIGHT BASEMAP
-    center: [-98, 38],
-    zoom: 3
+  container: 'map',
+  style: 'mapbox://styles/mapbox/light-v11',
+  center: [-98, 38],
+  zoom: 3
 });
 
 map.on('load', () => {
 
-    /* ===============================
-       DATA SOURCE WITH CLUSTERING
-    =============================== */
-    map.addSource('cases', {
-        type: 'geojson',
-        data: 'assets/us-covid-2020-counts.geojson',
-        cluster: true,
-        clusterMaxZoom: 6,
-        clusterRadius: 50
-    });
+  map.addSource('counties', {
+    type: 'geojson',
+    data: 'assets/us-covid-2020-rates.geojson'
+  });
 
-    /* ===============================
-       CLUSTER CIRCLES
-    =============================== */
-    map.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'cases',
-        filter: ['has', 'point_count'],
-        paint: {
-            'circle-color': [
-                'step',
-                ['get', 'point_count'],
-                '#ccebc5',
-                100, '#7bccc4',
-                750, '#2b8cbe'
-            ],
-            'circle-radius': [
-                'step',
-                ['get', 'point_count'],
-                15,
-                100, 25,
-                750, 40
-            ]
-        }
-    });
+  map.addLayer({
+    id: 'county-fill',
+    type: 'fill',
+    source: 'counties',
+    paint: {
+      'fill-color': [
+        'step',
+        ['get', 'rate'],
+        '#edf8fb',
+        5, '#b2e2e2',
+        10, '#66c2a4',
+        20, '#2ca25f',
+        30, '#006d2c'
+      ],
+      'fill-opacity': 0.8
+    }
+  });
 
-    /* ===============================
-       CLUSTER COUNT LABELS
-    =============================== */
-    map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'cases',
-        filter: ['has', 'point_count'],
-        layout: {
-            'text-field': '{point_count_abbreviated}',
-            'text-font': ['Open Sans Bold'],
-            'text-size': 12
-        }
-    });
+  map.addLayer({
+    id: 'county-outline',
+    type: 'line',
+    source: 'counties',
+    paint: {
+      'line-color': '#ffffff',
+      'line-width': 0.3
+    }
+  });
 
-    /* ===============================
-       UNCLUSTERED POINTS
-    =============================== */
-    map.addLayer({
-        id: 'unclustered-point',
-        type: 'circle',
-        source: 'cases',
-        filter: ['!', ['has', 'point_count']],
-        paint: {
-            'circle-color': '#41b6c4',
-            'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['get', 'cases'],
-                1000, 5,
-                10000, 10,
-                50000, 18
-            ],
-            'circle-opacity': 0.7,
-            'circle-stroke-width': 1,
-            'circle-stroke-color': '#333'
-        }
-    });
+  map.on('click', 'county-fill', (e) => {
+    const p = e.features[0].properties;
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML(`<strong>${p.county}</strong><br>Rate per 1,000: ${p.rate}`)
+      .addTo(map);
+  });
 
-    /* ===============================
-       POPUPS
-    =============================== */
-    map.on('click', 'unclustered-point', (e) => {
-        const p = e.features[0].properties;
-        new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(
-                `<strong>${p.county}</strong><br>
-                 Total Cases: ${p.cases}`
-            )
-            .addTo(map);
-    });
-
-    /* ===============================
-       LEGEND
-    =============================== */
-    const legend = document.getElementById('legend');
-    legend.innerHTML = `
-        <strong>COVID-19 Cases</strong><br>
-        <div><span style="background:#41b6c4;width:12px;height:12px;display:inline-block;border-radius:50%"></span> County</div>
-        <div><span style="background:#ccebc5;width:12px;height:12px;display:inline-block;border-radius:50%"></span> Small cluster</div>
-        <div><span style="background:#7bccc4;width:12px;height:12px;display:inline-block;border-radius:50%"></span> Medium cluster</div>
-        <div><span style="background:#2b8cbe;width:12px;height:12px;display:inline-block;border-radius:50%"></span> Large cluster</div>
-        <hr>
-        <small>Source: NY Times</small>
-    `;
+  document.getElementById('legend').innerHTML = `
+    <strong>COVID-19 Case Rates</strong><br>
+    <div><span style="background:#edf8fb"></span>0–5</div>
+    <div><span style="background:#b2e2e2"></span>5–10</div>
+    <div><span style="background:#66c2a4"></span>10–20</div>
+    <div><span style="background:#2ca25f"></span>20–30</div>
+    <div><span style="background:#006d2c"></span>30+</div>
+    <small>Source: NY Times</small>
+  `;
 });
-
