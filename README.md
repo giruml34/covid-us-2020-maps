@@ -55,9 +55,3 @@ https://giruml34.github.io/covid-us-2020-maps/map2.html
 
 ## Author
 Girum Wanoro
-
-
-## Live Maps
-- Map 1 (Case Rates): map1.html
-- Map 2 (Total Cases): map2.html
-
