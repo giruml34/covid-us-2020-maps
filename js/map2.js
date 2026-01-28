@@ -24,11 +24,11 @@ map.on('load', () => {
         'interpolate',
         ['linear'],
         ['get', 'cases'],
-        0, 5,
-        1000, 8,
-        10000, 12,
-        50000, 18,
-        200000, 28
+        0, 6,
+        500, 8,
+        5000, 12,
+        25000, 18,
+        100000, 26
       ],
       'circle-color': '#feb24c',
       'circle-opacity': 0.7,
@@ -56,4 +56,3 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 });
-
