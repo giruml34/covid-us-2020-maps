@@ -13,6 +13,7 @@
     body {
       margin: 0;
       padding: 0;
+      font-family: Arial, sans-serif;
     }
 
     #map {
@@ -28,7 +29,6 @@
       left: 20px;
       color: white;
       font-size: 24px;
-      font-family: Arial, sans-serif;
       z-index: 1;
     }
 
@@ -37,9 +37,10 @@
       bottom: 30px;
       right: 20px;
       background: white;
-      padding: 10px;
+      padding: 10px 12px;
       font-size: 12px;
-      font-family: Arial, sans-serif;
+      border-radius: 4px;
+      line-height: 1.4;
       z-index: 1;
     }
   </style>
@@ -48,11 +49,13 @@
 <body>
 
 <div id="map"></div>
+
 <div id="title">COVID-19 Total Cases (2020)</div>
 
 <div id="legend">
-  <b>Total Cases</b><br>
-  Small → Large
+  <b>Total COVID-19 Cases</b><br>
+  Circle size represents total cases<br>
+  Larger circles = more cases
 </div>
 
 <script>
@@ -108,4 +111,5 @@ map.on('load', () => {
 });
 </script>
 
-</
+</body>
+</html>
