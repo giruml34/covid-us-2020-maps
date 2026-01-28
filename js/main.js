@@ -1,62 +1,95 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2lydW13IiwiYSI6ImNtaGNsMnczejI4a2cybXB1b3h6dHBuaHkifQ.fO5Cyk2RL57zq0RKG8BDkg';
 
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/light-v11',
-  center: [-98, 38],
-  zoom: 3
-});
+/* =========================
+   MAP 1 – CHOROPLETH (RATES)
+========================= */
 
-map.on('load', () => {
+if (document.getElementById('map1')) {
 
-  map.addSource('counties', {
-    type: 'geojson',
-    data: 'assets/us-covid-2020-rates.geojson'
+  const map1 = new mapboxgl.Map({
+    container: 'map1',
+    style: 'mapbox://styles/mapbox/light-v11',
+    center: [-98, 39],
+    zoom: 3
   });
 
-  map.addLayer({
-    id: 'county-fill',
-    type: 'fill',
-    source: 'counties',
-    paint: {
-      'fill-color': [
-        'step',
-        ['get', 'rate'],
-        '#edf8fb',
-        5, '#b2e2e2',
-        10, '#66c2a4',
-        20, '#2ca25f',
-        30, '#006d2c'
-      ],
-      'fill-opacity': 0.8
-    }
+  map1.on('load', () => {
+
+    map1.addSource('rates', {
+      type: 'geojson',
+      data: 'assets/us-covid-2020-rates.geojson'
+    });
+
+    map1.addLayer({
+      id: 'rates-layer',
+      type: 'fill',
+      source: 'rates',
+      paint: {
+        'fill-color': [
+          'interpolate',
+          ['linear'],
+          ['get', 'rate'],
+          0, '#f2f0f7',
+          10, '#cbc9e2',
+          25, '#9e9ac8',
+          50, '#756bb1',
+          100, '#54278f'
+        ],
+        'fill-opacity': 0.8
+      }
+    });
+
+    map1.addLayer({
+      id: 'rates-outline',
+      type: 'line',
+      source: 'rates',
+      paint: {
+        'line-color': '#ffffff',
+        'line-width': 0.2
+      }
+    });
+  });
+}
+
+/* ==============================
+   MAP 2 – PROPORTIONAL SYMBOLS
+============================== */
+
+if (document.getElementById('map2')) {
+
+  const map2 = new mapboxgl.Map({
+    container: 'map2',
+    style: 'mapbox://styles/mapbox/light-v11',
+    center: [-98, 39],
+    zoom: 3
   });
 
-  map.addLayer({
-    id: 'county-outline',
-    type: 'line',
-    source: 'counties',
-    paint: {
-      'line-color': '#ffffff',
-      'line-width': 0.3
-    }
-  });
+  map2.on('load', () => {
 
-  map.on('click', 'county-fill', (e) => {
-    const p = e.features[0].properties;
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML(`<strong>${p.county}</strong><br>Rate per 1,000: ${p.rate}`)
-      .addTo(map);
-  });
+    map2.addSource('cases', {
+      type: 'geojson',
+      data: 'assets/us-covid-2020-counts.geojson'
+    });
 
-  document.getElementById('legend').innerHTML = `
-    <strong>COVID-19 Case Rates</strong><br>
-    <div><span style="background:#edf8fb"></span>0–5</div>
-    <div><span style="background:#b2e2e2"></span>5–10</div>
-    <div><span style="background:#66c2a4"></span>10–20</div>
-    <div><span style="background:#2ca25f"></span>20–30</div>
-    <div><span style="background:#006d2c"></span>30+</div>
-    <small>Source: NY Times</small>
-  `;
-});
+    map2.addLayer({
+      id: 'cases-circles',
+      type: 'circle',
+      source: 'cases',
+      paint: {
+        'circle-radius': [
+          'interpolate',
+          ['linear'],
+          ['get', 'cases'],
+          0, 2,
+          1000, 6,
+          10000, 12,
+          50000, 20
+        ],
+        'circle-color': '#3182bd',
+        'circle-opacity': 0.7,
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 0.5
+      }
+    });
+  });
+}
